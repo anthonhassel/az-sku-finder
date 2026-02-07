@@ -1,0 +1,83 @@
+import type { AzureSku } from '../types';
+
+export const MOCK_SKUS: AzureSku[] = [
+    {
+        resourceType: 'virtualMachines',
+        name: 'Standard_D2s_v3',
+        tier: 'Standard',
+        size: 'D2s_v3',
+        family: 'standardDSv3Family',
+        locations: ['westeurope', 'northeurope', 'eastus'],
+        locationInfo: [],
+        capabilities: [
+            { name: 'MaxResourceVolumeMB', value: '51200' },
+            { name: 'OSVhdSizeMB', value: '1047552' },
+            { name: 'vCPUs', value: '2' },
+            { name: 'MemoryGB', value: '8' },
+            { name: 'vCPUsAvailable', value: '2' },
+            { name: 'ACUs', value: '160' },
+            { name: 'PremiumIO', value: 'True' },
+        ],
+        restrictions: [],
+    },
+    {
+        resourceType: 'virtualMachines',
+        name: 'Standard_D4s_v3',
+        tier: 'Standard',
+        size: 'D4s_v3',
+        family: 'standardDSv3Family',
+        locations: ['westeurope', 'northeurope', 'eastus'],
+        locationInfo: [],
+        capabilities: [
+            { name: 'vCPUs', value: '4' },
+            { name: 'MemoryGB', value: '16' },
+            { name: 'PremiumIO', value: 'True' },
+        ],
+        restrictions: [],
+    },
+    {
+        resourceType: 'virtualMachines',
+        name: 'Standard_B2s',
+        tier: 'Standard',
+        size: 'B2s',
+        family: 'standardBSFamily',
+        locations: ['westeurope', 'eastus'],
+        locationInfo: [],
+        capabilities: [
+            { name: 'vCPUs', value: '2' },
+            { name: 'MemoryGB', value: '4' },
+            { name: 'PremiumIO', value: 'True' },
+        ],
+        restrictions: [],
+    },
+    {
+        resourceType: 'virtualMachines',
+        name: 'Standard_F2s_v2',
+        tier: 'Standard',
+        size: 'F2s_v2',
+        family: 'standardFSv2Family',
+        locations: ['westeurope', 'northeurope'],
+        locationInfo: [],
+        capabilities: [
+            { name: 'vCPUs', value: '2' },
+            { name: 'MemoryGB', value: '4' },
+            { name: 'PremiumIO', value: 'True' },
+        ],
+        restrictions: [],
+    },
+    {
+        resourceType: 'virtualMachines',
+        name: 'Standard_M8ms',
+        tier: 'Standard',
+        size: 'M8ms',
+        family: 'standardMSFamily',
+        locations: ['eastus'],
+        locationInfo: [],
+        capabilities: [
+            { name: 'vCPUs', value: '8' },
+            { name: 'MemoryGB', value: '218.75' },
+            { name: 'PremiumIO', value: 'True' },
+        ],
+        restrictions: [],
+    }
+];

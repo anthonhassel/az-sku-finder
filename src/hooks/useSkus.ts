@@ -37,6 +37,7 @@ export function useSkus(hasCredentials = false) {
         minRam: 0,
         minDisks: 0,
         minNics: 0,
+        feature: '',
     });
     const [refreshIndex, setRefreshIndex] = useState(0);
     const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
@@ -59,10 +60,11 @@ export function useSkus(hasCredentials = false) {
             try {
                 // If refreshIndex > 0, it means user clicked refresh, so force it.
                 // Initial load (refreshIndex 0) will use cache if available.
-                const force = refreshIndex > 0;
+                // Initial load (refreshIndex 0) will use cache if available.
 
-                const data = await AzureService.fetchSkus(filters.region, force);
-                const updated = AzureService.getLastUpdated(filters.region);
+
+                const data = await AzureService.fetchSkus();
+                const updated = AzureService.getLastUpdated();
 
                 if (isMounted) {
                     setAllSkus(data);
@@ -117,6 +119,29 @@ export function useSkus(hasCredentials = false) {
                 const nicCap = sku.capabilities.find((c) => c.name === 'MaxNetworkInterfaces');
                 const nics = nicCap ? parseInt(nicCap.value, 10) : 0;
                 if (nics < filters.minNics) return false;
+            }
+
+            // Filter by Feature
+            if (filters.feature) {
+                const getCap = (name: string) => sku.capabilities.find(c => c.name === name)?.value || 'False';
+
+                switch (filters.feature) {
+                    case 'premiumio':
+                        if (getCap('PremiumIO') !== 'True') return false;
+                        break;
+                    case 'ephemeral':
+                        if (getCap('EphemeralOS') !== 'True') return false;
+                        break;
+                    case 'accelerated':
+                        if (getCap('AcceleratedNetworking') !== 'True') return false;
+                        break;
+                    case 'nested':
+                        if (getCap('NestedVirtualization') !== 'True') return false;
+                        break;
+                    case 'encryption':
+                        if (getCap('EncryptionAtHost') !== 'True') return false;
+                        break;
+                }
             }
 
             return true;

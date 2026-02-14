@@ -1,7 +1,8 @@
 import type { AzureSku } from '../types';
-import { Zap, ArrowUpDown, ArrowUp, ArrowDown } from 'lucide-react';
+import { Zap, ArrowUpDown, ArrowUp, ArrowDown, Database, HardDrive, Layers, ShieldCheck } from 'lucide-react';
 import { motion } from 'framer-motion';
 import type { SortConfig, SortKey } from '../hooks/useSkus';
+import { Tooltip } from './Tooltip';
 
 interface SkuTableProps {
     skus: AzureSku[];
@@ -58,8 +59,8 @@ export function SkuTable({ skus, sortConfig, onSort }: SkuTableProps) {
                     {skus.map((sku, idx) => {
                         const cpu = getCap(sku, 'vCPUs');
                         const ram = getCap(sku, 'MemoryGB');
-                        const disks = getCap(sku, 'MaxDataDisks');
-                        const nics = getCap(sku, 'MaxNICs');
+                        const disks = getCap(sku, 'MaxDataDiskCount');
+                        const nics = getCap(sku, 'MaxNetworkInterfaces');
                         const accel = getCap(sku, 'AcceleratedNetworking') === 'True';
                         const price = getCap(sku, 'PricePerHour');
 
@@ -79,11 +80,46 @@ export function SkuTable({ skus, sortConfig, onSort }: SkuTableProps) {
                                 <td className="p-4 text-center font-mono">{disks}</td>
                                 <td className="p-4 text-center font-mono">{nics}</td>
                                 <td className="p-4 text-center">
-                                    {accel && (
-                                        <div className="inline-flex justify-center items-center w-8 h-8 rounded-full bg-purple-500/20" title="Accelerated Networking">
-                                            <Zap className="w-4 h-4 text-purple-400" />
-                                        </div>
-                                    )}
+                                    <div className="flex gap-1.5 justify-center">
+                                        {accel && (
+                                            <Tooltip content="Accelerated Networking: PCIe virtualization provides high-performance, low-latency communication by bypassing the host.">
+                                                <div className="p-1 rounded bg-purple-500/10 text-purple-400 border border-purple-500/20 cursor-help">
+                                                    <Zap className="w-3.5 h-3.5" />
+                                                </div>
+                                            </Tooltip>
+                                        )}
+                                        {getCap(sku, 'PremiumIO') === 'True' && (
+                                            <Tooltip content="Premium Storage: Support for high-performance Premium SSD and Ultra Disk storage for I/O intensive workloads.">
+                                                <div className="p-1 rounded bg-amber-500/10 text-amber-400 border border-amber-500/20 cursor-help">
+                                                    <Database className="w-3.5 h-3.5" />
+                                                </div>
+                                            </Tooltip>
+                                        )}
+                                        {getCap(sku, 'EphemeralOS') === 'True' && (
+                                            <Tooltip content="Ephemeral OS Disk: OS disk is created on local temp storage, providing faster read/write and zero cost, but data is lost on deallocate.">
+                                                <div className="p-1 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 cursor-help">
+                                                    <HardDrive className="w-3.5 h-3.5" />
+                                                </div>
+                                            </Tooltip>
+                                        )}
+                                        {getCap(sku, 'NestedVirtualization') === 'True' && (
+                                            <Tooltip content="Nested Virtualization: Hardware-assisted virtualization that allows you to run a hypervisor (like Hyper-V or Docker) inside the VM.">
+                                                <div className="p-1 rounded bg-blue-500/10 text-blue-400 border border-blue-500/20 cursor-help">
+                                                    <Layers className="w-3.5 h-3.5" />
+                                                </div>
+                                            </Tooltip>
+                                        )}
+                                        {getCap(sku, 'EncryptionAtHost') === 'True' && (
+                                            <Tooltip content="Encryption at Host: Data is encrypted on the VM's physical host before it's sent to storage, ensuring end-to-end security.">
+                                                <div className="p-1 rounded bg-green-500/10 text-green-400 border border-green-500/20 cursor-help">
+                                                    <ShieldCheck className="w-3.5 h-3.5" />
+                                                </div>
+                                            </Tooltip>
+                                        )}
+                                        {!accel && getCap(sku, 'PremiumIO') !== 'True' && getCap(sku, 'EphemeralOS') !== 'True' && (
+                                            <span className="text-gray-600">-</span>
+                                        )}
+                                    </div>
                                 </td>
                                 <td className="p-4 text-right font-mono text-green-400 font-bold">
                                     {formatPrice(price)}

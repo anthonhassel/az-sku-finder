@@ -49,9 +49,7 @@ function App() {
                     onUpdate={updateFilter}
                     viewMode={viewMode}
                     onViewChange={setViewMode}
-                    onRefresh={refresh}
                     lastUpdated={lastUpdated}
-                    loading={loading}
                 />
 
                 {loading ? (

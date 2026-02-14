@@ -1,0 +1,59 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [ main ]
+  schedule:
+    - cron: '0 0 * * *' # Every day at midnight UTC
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  id-token: write
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Update SKU Data
+        env:
+          # Script uses environment variables for auth or falls back to public data
+          VITE_AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+          VITE_AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+          VITE_AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
+          VITE_AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+        run: npm run update-data
+
+      - name: Build
+        run: npm run build
+        env:
+          # Bake public IDs into build. Secrets are OMITTED.
+          VITE_AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+          VITE_AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+          VITE_AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          VITE_SYNC_INTERVAL_HOURS: 24
+
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist

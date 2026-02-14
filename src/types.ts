@@ -29,4 +29,5 @@ export interface FilterOptions {
     minDisks?: number;
     minNics?: number;
     family?: string;
+    feature?: string;
 }

@@ -8,13 +8,5 @@ export default defineConfig({
     react(),
     tailwindcss(),
   ],
-  server: {
-    proxy: {
-      '/api/retail': {
-        target: 'https://prices.azure.com',
-        changeOrigin: true,
-        secure: false,
-      },
-    },
-  },
+
 })

@@ -69,17 +69,6 @@ node inspect-resource-skus.cjs
 node inspect-vm-specs.cjs
 ```
 
-## Recommended AI Skills
-
-To enhance development workflows, we recommend adding the following skills to your AI assistant configuration (e.g., in `.agent/skills/`):
-
-1.  **[frontend-design](https://github.com/anthropics/skills/tree/main/skills/frontend-design)**:
-    -   **Purpose**: Ensures high-quality, creative UI implementation using Tailwind CSS and Framer Motion.
-    -   **Benefits**: Promotes "wow" factor designs, advanced typography, and creative layouts.
-
-2.  **[webapp-testing](https://github.com/anthropics/skills/tree/main/skills/webapp-testing)**:
-    -   **Purpose**: Standardizes End-to-End (E2E) testing using Playwright.
-    -   **Benefits**: Provides robust testing patterns and automation strategies for React applications.
 
 ## Project Structure
 

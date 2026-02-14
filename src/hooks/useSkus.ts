@@ -2,13 +2,23 @@ import { useState, useMemo, useEffect } from 'react';
 import type { AzureSku, FilterOptions } from '../types';
 import { AzureService } from '../services/azureService';
 
-// Common regions to populate the dropdown
-const POPULAR_REGIONS = [
-    'eastus', 'eastus2', 'westus', 'westus2', 'centralus', 'southcentralus',
-    'northeurope', 'westeurope', 'uksouth', 'ukwest',
-    'southeastasia', 'eastasia', 'japaneast', 'japanwest',
-    'australiaeast', 'australiasoutheast'
+// Comprehensive list of Azure regions
+const ALL_REGIONS = [
+    // Americas
+    'eastus', 'eastus2', 'southcentralus', 'westus2', 'westus3', 'centralus', 'northcentralus', 'westus',
+    'canadaeast', 'canadacentral', 'brazilsouth', 'brazilsoutheast',
+    // Europe
+    'northeurope', 'westeurope', 'uksouth', 'ukwest', 'francecentral', 'francesouth',
+    'germanywestcentral', 'germanynorth', 'switzerlandnorth', 'switzerlandwest',
+    'norwayeast', 'norwaywest', 'swedencentral', 'polandcentral', 'italynorth',
+    // Asia Pacific
+    'eastasia', 'southeastasia', 'australiaeast', 'australiasoutheast', 'australiacentral', 'australiacentral2',
+    'japaneast', 'japanwest', 'koreacentral', 'koreasouth', 'centralindia', 'southindia', 'westindia',
+    // Middle East & Africa
+    'uaenorth', 'uaecentral', 'southafricanorth', 'southafricawest', 'qatarcentral', 'israelcentral'
 ];
+
+
 
 // Sorting types
 export type SortKey = 'name' | 'family' | 'vCPUs' | 'MemoryGB' | 'MaxDataDisks' | 'MaxNICs' | 'PricePerHour';
@@ -203,7 +213,7 @@ export function useSkus(hasCredentials = false) {
         loading,
         error,
         filters,
-        availableRegions: POPULAR_REGIONS.sort(),
+        availableRegions: ALL_REGIONS.sort(),
         updateFilter,
         refresh,
         lastUpdated,

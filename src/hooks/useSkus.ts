@@ -101,6 +101,10 @@ export function useSkus(hasCredentials = false) {
                 return parseFloat(cap.value) || 0;
             };
 
+            // Filter by OS availability
+            const osPriceCap = sku.capabilities.find(c => c.name === (filters.os === 'windows' ? 'PricePerHourWindows' : 'PricePerHourLinux'));
+            if (!osPriceCap || osPriceCap.value === 'Not Available') return false;
+
             // Filter by CPU
             if (filters.minCpu && filters.minCpu > 0) {
                 if (getNumCap('vCPUs') < filters.minCpu) return false;
@@ -148,7 +152,7 @@ export function useSkus(hasCredentials = false) {
 
             return true;
         });
-    }, [allSkus, filters.minCpu, filters.minRam, filters.minDisks, filters.minNics, filters.features]);
+    }, [allSkus, filters.minCpu, filters.minRam, filters.minDisks, filters.minNics, filters.features, filters.os]);
 
     // 2. SORT
     const sortedSkus = useMemo(() => {

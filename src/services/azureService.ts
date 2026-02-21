@@ -1,7 +1,10 @@
 import type { AzureSku } from '../types';
 
 export class AzureService {
-    private static DATA_URL = './data/skus.json';
+    private static get DATA_URL() {
+        // Appends 'data/skus.json' to the Vite base URL (e.g., '/az-sku-finder/' in production, '/' in dev)
+        return `${import.meta.env.BASE_URL}data/skus.json`;
+    }
 
     static getLastUpdated(): Date | null {
         // With static data, we could fetch a metadata file, but for now we'll assume "recently" or use header date if we want complexity.

@@ -30,3 +30,6 @@ dist-ssr
 
 # Generated data
 public/data/skus.json
+az_cli_all_skus.json
+all-vms.json
+test_*

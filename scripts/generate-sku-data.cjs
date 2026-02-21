@@ -196,37 +196,22 @@ async function run() {
                 }
             }
 
-            let vCpus;
-            let memoryGb;
-            let maxDisks;
-            let maxNics;
-            let acceleratedNetworking = 'False';
-            let family = '';
-            let isSpot = item.armSkuName.toLowerCase().includes('spot');
-
-            if (exactSku) {
-                const caps = exactSku.capabilities;
-                vCpus = constrainedCores ? constrainedCores : caps.find(c => c.name === 'vCPUs')?.value;
-                memoryGb = caps.find(c => c.name === 'MemoryGB')?.value;
-                maxDisks = caps.find(c => c.name === 'MaxDataDiskCount')?.value;
-                maxNics = caps.find(c => c.name === 'MaxNetworkInterfaces')?.value;
-                acceleratedNetworking = caps.find(c => c.name === 'AcceleratedNetworkingEnabled')?.value || 'False';
-
-                // Extra Features
-                const premiumIO = caps.find(c => c.name === 'PremiumIO')?.value || 'False';
-                const ephemeralOS = caps.find(c => c.name === 'EphemeralOSDiskSupported')?.value || 'False';
-                const nestedVirt = caps.find(c => c.name === 'NestedVirtualizationSupport')?.value || 'False';
-                const encryptionAtHost = caps.find(c => c.name === 'EncryptionAtHostSupported')?.value || 'False';
-
-                family = exactSku.family || 'Unknown';
-            } else {
-                // Formatting fallback
-                const parsed = SkuParser.parse(item.armSkuName);
-                vCpus = 'Not Available';
-                memoryGb = 'Not Available';
-                family = parsed.family || 'Unknown';
-                acceleratedNetworking = 'Not Available';
+            if (!exactSku) {
+                return null;
             }
+
+            const caps = exactSku.capabilities;
+            const vCpus = constrainedCores ? constrainedCores : caps.find(c => c.name === 'vCPUs')?.value;
+            const memoryGb = caps.find(c => c.name === 'MemoryGB')?.value;
+            const maxDisks = caps.find(c => c.name === 'MaxDataDiskCount')?.value;
+            const maxNics = caps.find(c => c.name === 'MaxNetworkInterfaces')?.value;
+            const acceleratedNetworking = caps.find(c => c.name === 'AcceleratedNetworkingEnabled')?.value || 'False';
+            const premiumIO = caps.find(c => c.name === 'PremiumIO')?.value || 'False';
+            const ephemeralOS = caps.find(c => c.name === 'EphemeralOSDiskSupported')?.value || 'False';
+            const nestedVirt = caps.find(c => c.name === 'NestedVirtualizationSupport')?.value || 'False';
+            const encryptionAtHost = caps.find(c => c.name === 'EncryptionAtHostSupported')?.value || 'False';
+            const family = exactSku.family || 'Unknown';
+            const isSpot = item.armSkuName.toLowerCase().includes('spot');
 
             // Merge features into capabilities array
             const capList = [
@@ -236,25 +221,12 @@ async function run() {
                 { name: 'IsSpot', value: isSpot ? 'True' : 'False' },
                 { name: 'MaxDataDiskCount', value: maxDisks || 'Not Available' },
                 { name: 'MaxNetworkInterfaces', value: maxNics || 'Not Available' },
-                { name: 'AcceleratedNetworking', value: acceleratedNetworking }
+                { name: 'AcceleratedNetworking', value: acceleratedNetworking },
+                { name: 'PremiumIO', value: premiumIO },
+                { name: 'EphemeralOS', value: ephemeralOS },
+                { name: 'NestedVirtualization', value: nestedVirt },
+                { name: 'EncryptionAtHost', value: encryptionAtHost }
             ];
-
-            if (exactSku) {
-                capList.push(
-                    { name: 'PremiumIO', value: exactSku.capabilities?.find(c => c.name === 'PremiumIO')?.value || 'False' },
-                    { name: 'EphemeralOS', value: exactSku.capabilities?.find(c => c.name === 'EphemeralOSDiskSupported')?.value || 'False' },
-                    { name: 'NestedVirtualization', value: exactSku.capabilities?.find(c => c.name === 'NestedVirtualizationSupport')?.value || 'False' },
-                    { name: 'EncryptionAtHost', value: exactSku.capabilities?.find(c => c.name === 'EncryptionAtHostSupported')?.value || 'False' }
-                );
-            } else {
-                // Heuristic values abandoned, set all to Not Available
-                capList.push(
-                    { name: 'PremiumIO', value: 'Not Available' },
-                    { name: 'EphemeralOS', value: 'Not Available' },
-                    { name: 'NestedVirtualization', value: 'Not Available' },
-                    { name: 'EncryptionAtHost', value: 'Not Available' }
-                );
-            }
 
             return {
                 resourceType: 'virtualMachines',
@@ -267,7 +239,7 @@ async function run() {
                 capabilities: capList,
                 restrictions: []
             };
-        });
+        }).filter(Boolean);
 
         // 4. Deduplicate
         console.log('Deduplicating...');

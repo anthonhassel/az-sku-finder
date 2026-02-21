@@ -9,8 +9,11 @@ interface SkuCardProps {
 
 export function SkuCard({ sku }: SkuCardProps) {
     const getCap = (name: string) => sku.capabilities.find(c => c.name === name)?.value || '-';
-    const vCPUs = getCap('vCPUs');
-    const memory = getCap('MemoryGB');
+    const formatValue = (val: string) => val === 'Not Available' ? '-' : val;
+    const vCPUs = formatValue(getCap('vCPUs'));
+    const memory = formatValue(getCap('MemoryGB'));
+    const maxDisks = formatValue(getCap('MaxDataDiskCount'));
+    const maxNics = formatValue(getCap('MaxNetworkInterfaces'));
     const premiumIO = getCap('PremiumIO') === 'True';
     const accelNet = getCap('AcceleratedNetworking') === 'True';
     const nestedVirt = getCap('NestedVirtualization') === 'True';
@@ -87,7 +90,7 @@ export function SkuCard({ sku }: SkuCardProps) {
                     </div>
                     <div>
                         <p className="text-sm text-gray-400">Max Disks</p>
-                        <p className="font-semibold text-white">{getCap('MaxDataDiskCount')}</p>
+                        <p className="font-semibold text-white">{maxDisks}</p>
                     </div>
                 </div>
 
@@ -98,7 +101,7 @@ export function SkuCard({ sku }: SkuCardProps) {
                     </div>
                     <div>
                         <p className="text-sm text-gray-400">NICs</p>
-                        <p className="font-semibold text-white">{getCap('MaxNetworkInterfaces')}</p>
+                        <p className="font-semibold text-white">{maxNics}</p>
                     </div>
                 </div>
             </div>

@@ -75,10 +75,10 @@ export function SkuTable({ skus, sortConfig, onSort }: SkuTableProps) {
                             >
                                 <td className="p-4 font-medium text-white">{sku.name}</td>
                                 <td className="p-4 text-gray-400">{sku.family}</td>
-                                <td className="p-4 text-right font-mono text-cyan-400">{cpu}</td>
-                                <td className="p-4 text-right font-mono text-emerald-400">{ram}</td>
-                                <td className="p-4 text-center font-mono">{disks}</td>
-                                <td className="p-4 text-center font-mono">{nics}</td>
+                                <td className={`p-4 text-right font-mono ${cpu === 'Not Available' ? 'text-gray-600' : 'text-cyan-400'}`}>{cpu === 'Not Available' ? '-' : cpu}</td>
+                                <td className={`p-4 text-right font-mono ${ram === 'Not Available' ? 'text-gray-600' : 'text-emerald-400'}`}>{ram === 'Not Available' ? '-' : ram}</td>
+                                <td className={`p-4 text-center font-mono ${disks === 'Not Available' ? 'text-gray-600' : ''}`}>{disks === 'Not Available' ? '-' : disks}</td>
+                                <td className={`p-4 text-center font-mono ${nics === 'Not Available' ? 'text-gray-600' : ''}`}>{nics === 'Not Available' ? '-' : nics}</td>
                                 <td className="p-4 text-center">
                                     <div className="flex gap-1.5 justify-center">
                                         {accel && (

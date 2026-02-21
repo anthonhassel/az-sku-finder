@@ -37,7 +37,7 @@ export function useSkus(hasCredentials = false) {
         minRam: 0,
         minDisks: 0,
         minNics: 0,
-        feature: '',
+        features: [],
     });
     const [refreshIndex, setRefreshIndex] = useState(0);
     const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
@@ -93,54 +93,55 @@ export function useSkus(hasCredentials = false) {
     // 1. FILTER
     const filteredSkus = useMemo(() => {
         return allSkus.filter((sku) => {
+            // Helper to get capability value and fallback to 0 if Not Available
+            const getNumCap = (name: string) => {
+                const cap = sku.capabilities.find((c) => c.name === name);
+                if (!cap || cap.value === 'Not Available') return 0;
+                return parseFloat(cap.value) || 0;
+            };
+
             // Filter by CPU
             if (filters.minCpu && filters.minCpu > 0) {
-                const cpuCap = sku.capabilities.find((c) => c.name === 'vCPUs');
-                const cpu = cpuCap ? parseInt(cpuCap.value, 10) : 0;
-                if (cpu < filters.minCpu) return false;
+                if (getNumCap('vCPUs') < filters.minCpu) return false;
             }
 
             // Filter by RAM
             if (filters.minRam && filters.minRam > 0) {
-                const ramCap = sku.capabilities.find((c) => c.name === 'MemoryGB');
-                const ram = ramCap ? parseFloat(ramCap.value) : 0;
-                if (ram < filters.minRam) return false;
+                if (getNumCap('MemoryGB') < filters.minRam) return false;
             }
 
             // Filter by Max Data Disks
             if (filters.minDisks && filters.minDisks > 0) {
-                const diskCap = sku.capabilities.find((c) => c.name === 'MaxDataDiskCount');
-                const disks = diskCap ? parseInt(diskCap.value, 10) : 0;
-                if (disks < filters.minDisks) return false;
+                if (getNumCap('MaxDataDiskCount') < filters.minDisks) return false;
             }
 
             // Filter by Max NICs
             if (filters.minNics && filters.minNics > 0) {
-                const nicCap = sku.capabilities.find((c) => c.name === 'MaxNetworkInterfaces');
-                const nics = nicCap ? parseInt(nicCap.value, 10) : 0;
-                if (nics < filters.minNics) return false;
+                if (getNumCap('MaxNetworkInterfaces') < filters.minNics) return false;
             }
 
-            // Filter by Feature
-            if (filters.feature) {
+            // Filter by Features
+            if (filters.features && filters.features.length > 0) {
                 const getCap = (name: string) => sku.capabilities.find(c => c.name === name)?.value || 'False';
 
-                switch (filters.feature) {
-                    case 'premiumio':
-                        if (getCap('PremiumIO') !== 'True') return false;
-                        break;
-                    case 'ephemeral':
-                        if (getCap('EphemeralOS') !== 'True') return false;
-                        break;
-                    case 'accelerated':
-                        if (getCap('AcceleratedNetworking') !== 'True') return false;
-                        break;
-                    case 'nested':
-                        if (getCap('NestedVirtualization') !== 'True') return false;
-                        break;
-                    case 'encryption':
-                        if (getCap('EncryptionAtHost') !== 'True') return false;
-                        break;
+                for (const feature of filters.features) {
+                    switch (feature) {
+                        case 'premiumio':
+                            if (getCap('PremiumIO') !== 'True') return false;
+                            break;
+                        case 'ephemeral':
+                            if (getCap('EphemeralOS') !== 'True') return false;
+                            break;
+                        case 'accelerated':
+                            if (getCap('AcceleratedNetworking') !== 'True') return false;
+                            break;
+                        case 'nested':
+                            if (getCap('NestedVirtualization') !== 'True') return false;
+                            break;
+                        case 'encryption':
+                            if (getCap('EncryptionAtHost') !== 'True') return false;
+                            break;
+                    }
                 }
             }
 

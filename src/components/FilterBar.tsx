@@ -1,5 +1,6 @@
+import { useState, useRef, useEffect } from 'react';
 import type { FilterOptions } from '../types';
-import { Cpu, MapPin, Server, LayoutGrid, List, HardDrive, Network, Zap } from 'lucide-react';
+import { Cpu, MapPin, Server, LayoutGrid, List, HardDrive, Network, Zap, ChevronDown, Check } from 'lucide-react';
 
 interface FilterBarProps {
     filters: FilterOptions;
@@ -11,6 +12,36 @@ interface FilterBarProps {
 }
 
 export function FilterBar({ filters, availableRegions, onUpdate, viewMode, onViewChange, lastUpdated }: FilterBarProps) {
+    const [isFeatureOpen, setIsFeatureOpen] = useState(false);
+    const featureDropdownRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        function handleClickOutside(event: MouseEvent) {
+            if (featureDropdownRef.current && !featureDropdownRef.current.contains(event.target as Node)) {
+                setIsFeatureOpen(false);
+            }
+        }
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => document.removeEventListener("mousedown", handleClickOutside);
+    }, []);
+
+    const FEATURE_OPTIONS = [
+        { id: 'premiumio', label: 'Premium Storage' },
+        { id: 'ephemeral', label: 'Ephemeral OS' },
+        { id: 'accelerated', label: 'Accelerated Net' },
+        { id: 'nested', label: 'Nested Virt' },
+        { id: 'encryption', label: 'Encryption' },
+    ];
+
+    const currentFeatures = filters.features || [];
+
+    const toggleFeature = (id: string) => {
+        const newFeatures = currentFeatures.includes(id)
+            ? currentFeatures.filter(f => f !== id)
+            : [...currentFeatures, id];
+        onUpdate('features', newFeatures);
+    };
+
     return (
         <div className="bg-white/10 backdrop-blur-lg border border-white/20 p-3 rounded-xl shadow-xl w-full max-w-[95rem] mx-auto mb-6 animate-in fade-in slide-in-from-top-4 duration-700 relative">
 
@@ -99,23 +130,43 @@ export function FilterBar({ filters, availableRegions, onUpdate, viewMode, onVie
                     </div>
                 </div>
 
-                {/* Feature Filter */}
-                <div className="relative">
-                    <label className="block text-[10px] font-medium text-gray-400 mb-1 ml-1 uppercase tracking-wider">Feature</label>
+                {/* Feature Filter (Multi-select) */}
+                <div className="relative" ref={featureDropdownRef}>
+                    <label className="block text-[10px] font-medium text-gray-400 mb-1 ml-1 uppercase tracking-wider">Features</label>
                     <div className="relative">
-                        <Zap className="absolute left-2.5 top-1/2 -translate-y-1/2 text-yellow-400 w-3.5 h-3.5 pointer-events-none" />
-                        <select
-                            value={filters.feature || ''}
-                            onChange={(e) => onUpdate('feature', e.target.value)}
-                            className="w-full bg-black/20 text-white text-sm pl-8 pr-2 py-2 rounded-lg border border-white/10 focus:border-yellow-500 focus:ring-1 focus:ring-yellow-500 outline-none appearance-none cursor-pointer hover:bg-black/30 transition-colors"
+                        <Zap className="absolute left-2.5 top-1/2 -translate-y-1/2 text-yellow-400 w-3.5 h-3.5 z-10 pointer-events-none" />
+                        <button
+                            type="button"
+                            onClick={() => setIsFeatureOpen(!isFeatureOpen)}
+                            className="w-full bg-black/20 text-white text-sm pl-8 pr-8 py-2 rounded-lg border border-white/10 hover:bg-black/30 transition-colors text-left flex items-center justify-between"
                         >
-                            <option value="">Any</option>
-                            <option value="premiumio">Premium Storage</option>
-                            <option value="ephemeral">Ephemeral OS</option>
-                            <option value="accelerated">Accelerated Net</option>
-                            <option value="nested">Nested Virt</option>
-                            <option value="encryption">Encryption</option>
-                        </select>
+                            <span className="truncate">
+                                {currentFeatures.length === 0
+                                    ? 'Any Features'
+                                    : `${currentFeatures.length} Selected`}
+                            </span>
+                            <ChevronDown className="w-4 h-4 text-gray-400 absolute right-2.5" />
+                        </button>
+
+                        {isFeatureOpen && (
+                            <div className="absolute top-full left-0 mt-1 w-full bg-gray-900 border border-white/10 rounded-lg shadow-xl z-50 py-1 max-h-48 overflow-y-auto">
+                                {FEATURE_OPTIONS.map(opt => {
+                                    const isSelected = currentFeatures.includes(opt.id);
+                                    return (
+                                        <button
+                                            key={opt.id}
+                                            onClick={() => toggleFeature(opt.id)}
+                                            className="w-full text-left px-3 py-2 text-sm text-gray-300 hover:bg-white/10 flex items-center justify-between group"
+                                        >
+                                            <span>{opt.label}</span>
+                                            <div className={`w-4 h-4 rounded-sm border ${isSelected ? 'bg-yellow-500 border-yellow-500' : 'border-gray-500 group-hover:border-gray-400'} flex items-center justify-center`}>
+                                                {isSelected && <Check className="w-3 h-3 text-white" strokeWidth={3} />}
+                                            </div>
+                                        </button>
+                                    );
+                                })}
+                            </div>
+                        )}
                     </div>
                 </div>
 

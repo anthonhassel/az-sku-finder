@@ -124,14 +124,14 @@ class SkuParser {
 
         return {
             family: family,
-            vCpus: vCpus,
-            memoryGb: memoryGb,
-            premiumIO: !!premiumIO,
-            ephemeralOS: !!ephemeralOS,
-            acceleratedNetworking: !!acceleratedNetworking,
-            nestedVirtualization: !!nestedVirtualization,
-            maxDataDisks: maxDataDisks,
-            maxNics: maxNics
+            vCpus: 'Not Available',
+            memoryGb: 'Not Available',
+            premiumIO: 'Not Available',
+            ephemeralOS: 'Not Available',
+            acceleratedNetworking: 'Not Available',
+            nestedVirtualization: 'Not Available',
+            maxDataDisks: 'Not Available',
+            maxNics: 'Not Available'
         };
     }
 }
@@ -254,22 +254,20 @@ async function run() {
             } else {
                 // Formatting fallback
                 const parsed = SkuParser.parse(item.armSkuName);
-                vCpus = parsed.vCpus?.toString() || '0';
-                memoryGb = parsed.memoryGb?.toString() || '0';
+                vCpus = 'Not Available';
+                memoryGb = 'Not Available';
                 family = parsed.family || 'Unknown';
-
-                // Heuristics for features
-                acceleratedNetworking = parsed.acceleratedNetworking ? 'True' : 'False';
+                acceleratedNetworking = 'Not Available';
             }
 
             // Merge features into capabilities array
             const capList = [
-                { name: 'vCPUs', value: vCpus || '0' },
-                { name: 'MemoryGB', value: memoryGb || '0' },
+                { name: 'vCPUs', value: vCpus || 'Not Available' },
+                { name: 'MemoryGB', value: memoryGb || 'Not Available' },
                 { name: 'PricePerHour', value: item.retailPrice.toString() },
                 { name: 'IsSpot', value: isSpot ? 'True' : 'False' },
-                { name: 'MaxDataDiskCount', value: maxDisks || (SkuParser.parse(item.armSkuName).maxDataDisks?.toString() || '?') },
-                { name: 'MaxNetworkInterfaces', value: maxNics || (SkuParser.parse(item.armSkuName).maxNics?.toString() || '?') },
+                { name: 'MaxDataDiskCount', value: maxDisks || 'Not Available' },
+                { name: 'MaxNetworkInterfaces', value: maxNics || 'Not Available' },
                 { name: 'AcceleratedNetworking', value: acceleratedNetworking }
             ];
 
@@ -281,13 +279,12 @@ async function run() {
                     { name: 'EncryptionAtHost', value: exactSku.capabilities?.find(c => c.name === 'EncryptionAtHostSupported')?.value || 'False' }
                 );
             } else {
-                // Heuristic values
-                const parsed = SkuParser.parse(item.armSkuName);
+                // Heuristic values abandoned, set all to Not Available
                 capList.push(
-                    { name: 'PremiumIO', value: parsed.premiumIO ? 'True' : 'False' },
-                    { name: 'EphemeralOS', value: parsed.ephemeralOS ? 'True' : 'False' },
-                    { name: 'NestedVirtualization', value: parsed.nestedVirtualization ? 'True' : 'False' },
-                    { name: 'EncryptionAtHost', value: 'False' } // Conservative default
+                    { name: 'PremiumIO', value: 'Not Available' },
+                    { name: 'EphemeralOS', value: 'Not Available' },
+                    { name: 'NestedVirtualization', value: 'Not Available' },
+                    { name: 'EncryptionAtHost', value: 'Not Available' }
                 );
             }
 

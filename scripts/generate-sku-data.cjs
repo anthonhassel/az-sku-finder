@@ -181,7 +181,20 @@ async function run() {
         // 3. Merge & Transform
         console.log('Merging and Transforming data...');
         const result = retailItems.map(item => {
-            const exactSku = skuMap[item.armSkuName];
+            let exactSku = skuMap[item.armSkuName];
+            let constrainedCores = null;
+
+            // Handle Azure Constrained Core sizes (e.g., Standard_M416-208ms_v2 -> Standard_M416ms_v2)
+            if (!exactSku) {
+                const match = item.armSkuName.match(/^([a-zA-Z0-9_]+?)-(\d+)(.*)$/);
+                if (match) {
+                    const baseName = match[1] + match[3];
+                    exactSku = skuMap[baseName];
+                    if (exactSku) {
+                        constrainedCores = match[2];
+                    }
+                }
+            }
 
             let vCpus;
             let memoryGb;
@@ -193,7 +206,7 @@ async function run() {
 
             if (exactSku) {
                 const caps = exactSku.capabilities;
-                vCpus = caps.find(c => c.name === 'vCPUs')?.value;
+                vCpus = constrainedCores ? constrainedCores : caps.find(c => c.name === 'vCPUs')?.value;
                 memoryGb = caps.find(c => c.name === 'MemoryGB')?.value;
                 maxDisks = caps.find(c => c.name === 'MaxDataDiskCount')?.value;
                 maxNics = caps.find(c => c.name === 'MaxNetworkInterfaces')?.value;

@@ -122,7 +122,7 @@ async function fetchRetailPrices(region) {
 
 async function fetchResourceSkus(token, subscriptionId, region) {
     console.log(`Fetching Resource SKUs (Specs) for ${region}...`);
-    let url = `https://management.azure.com/subscriptions/${subscriptionId}/providers/Microsoft.Compute/skus?api-version=2023-01-01&$filter=location eq '${region}'`;
+    let url = `https://management.azure.com/subscriptions/${subscriptionId}/providers/Microsoft.Compute/skus?api-version=2023-01-01`;
     const map = {};
     let page = 0;
 

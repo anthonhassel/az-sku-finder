@@ -77,51 +77,6 @@ class SkuParser {
         else if (lowerName.includes('_m')) family = 'M Series (High Memory)';
         else if (lowerName.includes('_n')) family = 'N Series (GPU)';
 
-        // 2. Extract vCPUs
-        let vCpus = 0;
-        const cpuMatch = skuName.match(/[A-Za-z]+(\d+)/);
-        if (cpuMatch) {
-            vCpus = parseInt(cpuMatch[1], 10);
-        }
-
-        // 3. Heuristic for RAM
-        let ratio = 4;
-        if (lowerName.includes('_e') || lowerName.includes('_l')) ratio = 8;
-        if (lowerName.includes('_f')) ratio = 2;
-        if (lowerName.includes('_m')) ratio = 28;
-        if (lowerName.includes('_b')) ratio = 4; // B-series varies but 1:4 is okay guess
-        if (lowerName.includes('_a')) ratio = 2; // A-series v2 is 1:2
-
-        const memoryGb = vCpus * ratio;
-
-        // 4. Feature Heuristics
-        // Premium Storage: 's' in name (e.g. D2s_v3)
-        const premiumIO = lowerName.match(/[a-z]\d+s/) || lowerName.includes('s_v') || lowerName.endsWith('s');
-
-        // Ephemeral OS: Most 's' series support it if they have temp disk (which most do)
-        const ephemeralOS = premiumIO;
-
-        // Accelerated Networking: v3+ with 2+ cores (except B, A)
-        const isV3Plus = lowerName.includes('_v3') || lowerName.includes('_v4') || lowerName.includes('_v5');
-        const isBSeries = lowerName.includes('_b');
-        const isASeries = lowerName.includes('_a');
-        const acceleratedNetworking = (isV3Plus && vCpus >= 2 && !isBSeries && !isASeries) || (lowerName.includes('_f') && lowerName.includes('s'));
-
-        // Nested Virtualization: D/E v3+
-        const nestedVirtualization = isV3Plus && (lowerName.includes('_d') || lowerName.includes('_e'));
-
-        // 5. Heuristic for Disks & NICs (Fallback)
-        // Max Data Disks: Usually 2 * vCPUs, up to a maximum of 64
-        const maxDataDisks = Math.min(vCpus * 2, 64);
-
-        // Max NICs: 
-        // < 4 vCPUs -> 2
-        // 4 <= vCPUs < 16 -> 4
-        // >= 16 vCPUs -> 8
-        let maxNics = 2;
-        if (vCpus >= 16) maxNics = 8;
-        else if (vCpus >= 4) maxNics = 4;
-
         return {
             family: family,
             vCpus: 'Not Available',

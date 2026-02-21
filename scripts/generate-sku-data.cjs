@@ -200,7 +200,11 @@ async function run() {
         let token = null;
 
         // Try getting token from environment (e.g. GitHub Actions) or client credentials
-        if (TENANT_ID && CLIENT_ID && CLIENT_SECRET) {
+        if (process.env.AZURE_ACCESS_TOKEN) {
+            console.log('Using AZURE_ACCESS_TOKEN from environment.');
+            token = process.env.AZURE_ACCESS_TOKEN;
+        } else if (TENANT_ID && CLIENT_ID && CLIENT_SECRET) {
+            console.log('Using Client Credentials OAuth flow.');
             const tokenParams = new URLSearchParams({
                 grant_type: 'client_credentials',
                 client_id: CLIENT_ID,
@@ -210,7 +214,7 @@ async function run() {
             const tokenRes = await post(`https://login.microsoftonline.com/${TENANT_ID}/oauth2/v2.0/token`, tokenParams.toString());
             token = tokenRes.access_token;
         } else {
-            console.warn('Missing credentials (TENANT_ID, CLIENT_ID, CLIENT_SECRET). Fetching only public retail data (specs will be limited).');
+            console.warn('Missing credentials (AZURE_ACCESS_TOKEN or TENANT_ID/CLIENT_ID/CLIENT_SECRET). Fetching only public retail data (specs will be limited).');
         }
 
         // 2. Fetch Data

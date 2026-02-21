@@ -34,13 +34,17 @@ jobs:
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
+      - name: Get Azure Access Token
+        run: |
+          TOKEN=$(az account get-access-token --resource https://management.azure.com/ --query accessToken -o tsv)
+          echo "AZURE_ACCESS_TOKEN=$TOKEN" >> $GITHUB_ENV
+
       - name: Update SKU Data
         env:
-          # Script uses environment variables for auth or falls back to public data
           VITE_AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
           VITE_AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
-          VITE_AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
           VITE_AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          AZURE_ACCESS_TOKEN: ${{ env.AZURE_ACCESS_TOKEN }}
         run: npm run update-data
 
       - name: Build

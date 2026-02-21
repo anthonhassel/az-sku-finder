@@ -33,6 +33,7 @@ export function useSkus(hasCredentials = false) {
     const [error, setError] = useState<string | null>(null);
     const [filters, setFilters] = useState<FilterOptions>({
         region: 'westeurope', // Default
+        os: 'linux',
         minCpu: 0,
         minRam: 0,
         minDisks: 0,
@@ -181,7 +182,7 @@ export function useSkus(hasCredentials = false) {
                     capName = 'MaxNetworkInterfaces';
                     break;
                 case 'PricePerHour':
-                    capName = 'PricePerHour';
+                    capName = filters.os === 'windows' ? 'PricePerHourWindows' : 'PricePerHourLinux';
                     break;
                 default:
                     return 0;

@@ -62,11 +62,11 @@ function App() {
                             {viewMode === 'grid' ? (
                                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                                     {skus.map((sku) => (
-                                        <SkuCard key={sku.name} sku={sku} />
+                                        <SkuCard key={sku.name} sku={sku} os={filters.os} />
                                     ))}
                                 </div>
                             ) : (
-                                <SkuTable skus={skus} sortConfig={sortConfig} onSort={handleSort} />
+                                <SkuTable skus={skus} sortConfig={sortConfig} onSort={handleSort} os={filters.os} />
                             )}
 
                             {/* Bottom Pagination */}

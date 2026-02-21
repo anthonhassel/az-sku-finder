@@ -178,9 +178,49 @@ async function run() {
             token && SUBSCRIPTION_ID ? fetchResourceSkus(token, SUBSCRIPTION_ID, REGION) : Promise.resolve({})
         ]);
 
-        // 3. Merge & Transform
+        // 3. Group Retail Prices by OS
+        console.log('Grouping Retail Prices (Linux vs Windows)...');
+        const groupedRetail = new Map();
+
+        retailItems.forEach(item => {
+            const name = item.armSkuName;
+
+            // Skip spot or low priority for standard OS pricing
+            const isSpot = item.skuName.toLowerCase().includes('spot') || item.productName.toLowerCase().includes('spot');
+            const isLowPriority = item.skuName.toLowerCase().includes('low priority') || item.productName.toLowerCase().includes('low priority');
+
+            if (isSpot || isLowPriority) return;
+
+            if (!groupedRetail.has(name)) {
+                groupedRetail.set(name, {
+                    armSkuName: name,
+                    skuName: item.skuName,
+                    armRegionName: item.armRegionName,
+                    priceLinux: null,
+                    priceWindows: null
+                });
+            }
+
+            const group = groupedRetail.get(name);
+            const isWindows = item.productName.toLowerCase().includes('windows');
+            const price = parseFloat(item.retailPrice);
+
+            if (isWindows) {
+                if (group.priceWindows === null || price < group.priceWindows) {
+                    group.priceWindows = price;
+                }
+            } else {
+                if (group.priceLinux === null || price < group.priceLinux) {
+                    group.priceLinux = price;
+                }
+            }
+        });
+
+        const standardRetailItems = Array.from(groupedRetail.values());
+
+        // 4. Merge & Transform
         console.log('Merging and Transforming data...');
-        const result = retailItems.map(item => {
+        const finalSkus = standardRetailItems.map(item => {
             let exactSku = skuMap[item.armSkuName];
             let constrainedCores = null;
 
@@ -211,14 +251,13 @@ async function run() {
             const nestedVirt = caps.find(c => c.name === 'NestedVirtualizationSupport')?.value || 'False';
             const encryptionAtHost = caps.find(c => c.name === 'EncryptionAtHostSupported')?.value || 'False';
             const family = exactSku.family || 'Unknown';
-            const isSpot = item.armSkuName.toLowerCase().includes('spot');
 
             // Merge features into capabilities array
             const capList = [
                 { name: 'vCPUs', value: vCpus || 'Not Available' },
                 { name: 'MemoryGB', value: memoryGb || 'Not Available' },
-                { name: 'PricePerHour', value: item.retailPrice.toString() },
-                { name: 'IsSpot', value: isSpot ? 'True' : 'False' },
+                { name: 'PricePerHourLinux', value: item.priceLinux !== null ? item.priceLinux.toString() : 'Not Available' },
+                { name: 'PricePerHourWindows', value: item.priceWindows !== null ? item.priceWindows.toString() : 'Not Available' },
                 { name: 'MaxDataDiskCount', value: maxDisks || 'Not Available' },
                 { name: 'MaxNetworkInterfaces', value: maxNics || 'Not Available' },
                 { name: 'AcceleratedNetworking', value: acceleratedNetworking },
@@ -240,24 +279,6 @@ async function run() {
                 restrictions: []
             };
         }).filter(Boolean);
-
-        // 4. Deduplicate
-        console.log('Deduplicating...');
-        const uniqueSkus = new Map();
-        result.forEach(sku => {
-            const existing = uniqueSkus.get(sku.name);
-            if (!existing) {
-                uniqueSkus.set(sku.name, sku);
-            } else {
-                const existingPrice = parseFloat(existing.capabilities.find(c => c.name === 'PricePerHour')?.value || '0');
-                const newPrice = parseFloat(sku.capabilities.find(c => c.name === 'PricePerHour')?.value || '0');
-
-                if (newPrice < existingPrice) {
-                    uniqueSkus.set(sku.name, sku);
-                }
-            }
-        });
-        const finalSkus = Array.from(uniqueSkus.values());
 
         // 5. Save
         console.log(`Saving ${finalSkus.length} SKUs to ${OUTPUT_FILE}...`);

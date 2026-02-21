@@ -24,6 +24,7 @@ export interface AzureSku {
 
 export interface FilterOptions {
     region: string;
+    os: 'linux' | 'windows';
     minCpu?: number;
     minRam?: number;
     minDisks?: number;

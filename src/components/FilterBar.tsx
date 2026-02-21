@@ -46,7 +46,7 @@ export function FilterBar({ filters, availableRegions, onUpdate, viewMode, onVie
         <div className="bg-white/10 backdrop-blur-lg border border-white/20 p-3 rounded-xl shadow-xl w-full max-w-[95rem] mx-auto mb-6 animate-in fade-in slide-in-from-top-4 duration-700 relative z-50">
 
             {/* Single Row: All Filters & Controls */}
-            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3 w-full items-end">
+            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-3 w-full items-end">
                 {/* Region Selector */}
                 <div className="relative">
                     <label className="block text-[10px] font-medium text-gray-400 mb-1 ml-1 uppercase tracking-wider">Region</label>
@@ -63,6 +63,22 @@ export function FilterBar({ filters, availableRegions, onUpdate, viewMode, onVie
                                 </option>
                             ))}
                         </select>
+                    </div>
+                </div>
+
+                {/* OS Selector */}
+                <div className="relative">
+                    <label className="block text-[10px] font-medium text-gray-400 mb-1 ml-1 uppercase tracking-wider">OS</label>
+                    <div className="relative">
+                        <select
+                            value={filters.os}
+                            onChange={(e) => onUpdate('os', e.target.value)}
+                            className="w-full bg-black/20 text-white text-sm pl-3 pr-8 py-2 rounded-lg border border-white/10 focus:border-pink-500 focus:ring-1 focus:ring-pink-500 outline-none appearance-none cursor-pointer hover:bg-black/30 transition-colors"
+                        >
+                            <option value="linux" className="bg-gray-900 text-white">Linux</option>
+                            <option value="windows" className="bg-gray-900 text-white">Windows</option>
+                        </select>
+                        <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
                     </div>
                 </div>
 

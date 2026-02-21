@@ -8,9 +8,10 @@ interface SkuTableProps {
     skus: AzureSku[];
     sortConfig: SortConfig;
     onSort: (key: SortKey) => void;
+    os: 'linux' | 'windows';
 }
 
-export function SkuTable({ skus, sortConfig, onSort }: SkuTableProps) {
+export function SkuTable({ skus, sortConfig, onSort, os }: SkuTableProps) {
 
     const getCap = (sku: AzureSku, name: string) => {
         return sku.capabilities.find((c) => c.name === name)?.value || '-';
@@ -62,7 +63,7 @@ export function SkuTable({ skus, sortConfig, onSort }: SkuTableProps) {
                         const disks = getCap(sku, 'MaxDataDiskCount');
                         const nics = getCap(sku, 'MaxNetworkInterfaces');
                         const accel = getCap(sku, 'AcceleratedNetworking') === 'True';
-                        const price = getCap(sku, 'PricePerHour');
+                        const price = getCap(sku, os === 'windows' ? 'PricePerHourWindows' : 'PricePerHourLinux');
 
                         return (
                             <motion.tr

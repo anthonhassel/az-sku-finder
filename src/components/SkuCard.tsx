@@ -5,9 +5,10 @@ import { Tooltip } from './Tooltip';
 
 interface SkuCardProps {
     sku: AzureSku;
+    os: 'linux' | 'windows';
 }
 
-export function SkuCard({ sku }: SkuCardProps) {
+export function SkuCard({ sku, os }: SkuCardProps) {
     const getCap = (name: string) => sku.capabilities.find(c => c.name === name)?.value || '-';
     const formatValue = (val: string) => val === 'Not Available' ? '-' : val;
     const vCPUs = formatValue(getCap('vCPUs'));
@@ -127,7 +128,7 @@ export function SkuCard({ sku }: SkuCardProps) {
                     )}
                 </div>
                 <span className="flex items-center gap-1 font-medium text-emerald-400 bg-emerald-500/10 px-2 py-1 rounded-md border border-emerald-500/20">
-                    $ {getCap('PricePerHour') !== '-' ? parseFloat(getCap('PricePerHour')).toFixed(4) : 'N/A'}/hr
+                    $ {getCap(os === 'windows' ? 'PricePerHourWindows' : 'PricePerHourLinux') !== '-' ? parseFloat(getCap(os === 'windows' ? 'PricePerHourWindows' : 'PricePerHourLinux')).toFixed(4) : 'N/A'}/hr
                 </span>
             </div>
         </motion.div>

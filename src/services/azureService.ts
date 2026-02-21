@@ -3,7 +3,10 @@ import type { AzureSku } from '../types';
 export class AzureService {
     private static get DATA_URL() {
         // Appends 'data/skus.json' to the Vite base URL (e.g., '/az-sku-finder/' in production, '/' in dev)
-        return `${import.meta.env.BASE_URL}data/skus.json`;
+        // Using window.location.origin + BASE_URL ensures we always request from the correct absolute root
+        const base = import.meta.env.BASE_URL;
+        const normalizedBase = base.endsWith('/') ? base : `${base}/`;
+        return new URL(`${normalizedBase}data/skus.json`, window.location.origin).toString();
     }
 
     static getLastUpdated(): Date | null {

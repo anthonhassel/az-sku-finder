@@ -147,7 +147,7 @@ export function useSkus(hasCredentials = false) {
 
             return true;
         });
-    }, [allSkus, filters.minCpu, filters.minRam, filters.minDisks, filters.minNics]);
+    }, [allSkus, filters.minCpu, filters.minRam, filters.minDisks, filters.minNics, filters.features]);
 
     // 2. SORT
     const sortedSkus = useMemo(() => {

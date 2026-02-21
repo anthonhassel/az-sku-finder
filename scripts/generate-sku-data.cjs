@@ -111,8 +111,8 @@ class SkuParser {
         const nestedVirtualization = isV3Plus && (lowerName.includes('_d') || lowerName.includes('_e'));
 
         // 5. Heuristic for Disks & NICs (Fallback)
-        // Max Data Disks: Usually 2 * vCPUs
-        const maxDataDisks = vCpus * 2;
+        // Max Data Disks: Usually 2 * vCPUs, up to a maximum of 64
+        const maxDataDisks = Math.min(vCpus * 2, 64);
 
         // Max NICs: 
         // < 4 vCPUs -> 2

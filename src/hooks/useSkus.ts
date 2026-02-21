@@ -190,15 +190,8 @@ export function useSkus(hasCredentials = false) {
             const aValRaw = getCap(a, capName);
             const bValRaw = getCap(b, capName);
 
-            const aIsNA = aValRaw === 'Not Available';
-            const bIsNA = bValRaw === 'Not Available';
-
-            if (aIsNA && !bIsNA) return 1;
-            if (!aIsNA && bIsNA) return -1;
-            if (aIsNA && bIsNA) return 0;
-
-            const aVal = Number(aValRaw) || 0;
-            const bVal = Number(bValRaw) || 0;
+            const aVal = aValRaw === 'Not Available' ? -1 : (Number(aValRaw) || 0);
+            const bVal = bValRaw === 'Not Available' ? -1 : (Number(bValRaw) || 0);
 
             if (aVal < bVal) return sortConfig.direction === 'asc' ? -1 : 1;
             if (aVal > bVal) return sortConfig.direction === 'asc' ? 1 : -1;

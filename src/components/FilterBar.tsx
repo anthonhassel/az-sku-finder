@@ -43,7 +43,7 @@ export function FilterBar({ filters, availableRegions, onUpdate, viewMode, onVie
     };
 
     return (
-        <div className="bg-white/10 backdrop-blur-lg border border-white/20 p-3 rounded-xl shadow-xl w-full max-w-[95rem] mx-auto mb-6 animate-in fade-in slide-in-from-top-4 duration-700 relative">
+        <div className="bg-white/10 backdrop-blur-lg border border-white/20 p-3 rounded-xl shadow-xl w-full max-w-[95rem] mx-auto mb-6 animate-in fade-in slide-in-from-top-4 duration-700 relative z-50">
 
             {/* Single Row: All Filters & Controls */}
             <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3 w-full items-end">

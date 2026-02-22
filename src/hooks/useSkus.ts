@@ -35,9 +35,13 @@ export function useSkus(hasCredentials = false) {
         region: 'westeurope', // Default
         os: 'linux',
         minCpu: 0,
+        maxCpu: 0,
         minRam: 0,
+        maxRam: 0,
         minDisks: 0,
+        maxDisks: 0,
         minNics: 0,
+        maxNics: 0,
         features: [],
     });
     const [refreshIndex, setRefreshIndex] = useState(0);
@@ -109,20 +113,32 @@ export function useSkus(hasCredentials = false) {
             if (filters.minCpu && filters.minCpu > 0) {
                 if (getNumCap('vCPUs') < filters.minCpu) return false;
             }
+            if (filters.maxCpu && filters.maxCpu > 0) {
+                if (getNumCap('vCPUs') > filters.maxCpu) return false;
+            }
 
             // Filter by RAM
             if (filters.minRam && filters.minRam > 0) {
                 if (getNumCap('MemoryGB') < filters.minRam) return false;
+            }
+            if (filters.maxRam && filters.maxRam > 0) {
+                if (getNumCap('MemoryGB') > filters.maxRam) return false;
             }
 
             // Filter by Max Data Disks
             if (filters.minDisks && filters.minDisks > 0) {
                 if (getNumCap('MaxDataDiskCount') < filters.minDisks) return false;
             }
+            if (filters.maxDisks && filters.maxDisks > 0) {
+                if (getNumCap('MaxDataDiskCount') > filters.maxDisks) return false;
+            }
 
             // Filter by Max NICs
             if (filters.minNics && filters.minNics > 0) {
                 if (getNumCap('MaxNetworkInterfaces') < filters.minNics) return false;
+            }
+            if (filters.maxNics && filters.maxNics > 0) {
+                if (getNumCap('MaxNetworkInterfaces') > filters.maxNics) return false;
             }
 
             // Filter by Features
@@ -152,7 +168,7 @@ export function useSkus(hasCredentials = false) {
 
             return true;
         });
-    }, [allSkus, filters.minCpu, filters.minRam, filters.minDisks, filters.minNics, filters.features, filters.os]);
+    }, [allSkus, filters.minCpu, filters.maxCpu, filters.minRam, filters.maxRam, filters.minDisks, filters.maxDisks, filters.minNics, filters.maxNics, filters.features, filters.os]);
 
     // 2. SORT
     const sortedSkus = useMemo(() => {

@@ -26,9 +26,13 @@ export interface FilterOptions {
     region: string;
     os: 'linux' | 'windows';
     minCpu?: number;
+    maxCpu?: number;
     minRam?: number;
+    maxRam?: number;
     minDisks?: number;
+    maxDisks?: number;
     minNics?: number;
+    maxNics?: number;
     family?: string;
     features?: string[];
 }

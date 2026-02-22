@@ -84,64 +84,100 @@ export function FilterBar({ filters, availableRegions, onUpdate, viewMode, onVie
 
                 {/* CPU Filter */}
                 <div className="relative">
-                    <label className="block text-[10px] font-medium text-gray-400 mb-1 ml-1 uppercase tracking-wider">Min CPUs</label>
-                    <div className="relative">
-                        <Cpu className="absolute left-2.5 top-1/2 -translate-y-1/2 text-cyan-400 w-4 h-4 pointer-events-none" />
+                    <label className="block text-[10px] font-medium text-gray-400 mb-1 ml-1 uppercase tracking-wider">CPUs (Min / Max)</label>
+                    <div className="relative flex items-center gap-1 bg-black/20 rounded-lg border border-white/10 px-2 py-1 hover:bg-black/30 transition-colors focus-within:border-cyan-500 focus-within:ring-1 focus-within:ring-cyan-500">
+                        <Cpu className="text-cyan-400 w-4 h-4 shrink-0" />
                         <input
                             type="number"
                             min="0"
                             value={filters.minCpu || ''}
                             onChange={(e) => onUpdate('minCpu', parseInt(e.target.value) || 0)}
-                            placeholder="Any"
-                            className="w-full bg-black/20 text-white text-sm pl-8 pr-2 py-2 rounded-lg border border-white/10 focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 outline-none hover:bg-black/30 transition-colors"
+                            placeholder="Min"
+                            className="w-full bg-transparent text-white text-sm outline-none placeholder:text-gray-600 mini-input"
+                        />
+                        <span className="text-gray-600">/</span>
+                        <input
+                            type="number"
+                            min="0"
+                            value={filters.maxCpu || ''}
+                            onChange={(e) => onUpdate('maxCpu', parseInt(e.target.value) || 0)}
+                            placeholder="Max"
+                            className="w-full bg-transparent text-white text-sm outline-none placeholder:text-gray-600 mini-input"
                         />
                     </div>
                 </div>
 
                 {/* RAM Filter */}
                 <div className="relative">
-                    <label className="block text-[10px] font-medium text-gray-400 mb-1 ml-1 uppercase tracking-wider">Min RAM</label>
-                    <div className="relative">
-                        <Server className="absolute left-2.5 top-1/2 -translate-y-1/2 text-emerald-400 w-4 h-4 pointer-events-none" />
+                    <label className="block text-[10px] font-medium text-gray-400 mb-1 ml-1 uppercase tracking-wider">RAM (Min / Max)</label>
+                    <div className="relative flex items-center gap-1 bg-black/20 rounded-lg border border-white/10 px-2 py-1 hover:bg-black/30 transition-colors focus-within:border-emerald-500 focus-within:ring-1 focus-within:ring-emerald-500">
+                        <Server className="text-emerald-400 w-4 h-4 shrink-0" />
                         <input
                             type="number"
                             min="0"
                             value={filters.minRam || ''}
                             onChange={(e) => onUpdate('minRam', parseFloat(e.target.value) || 0)}
-                            placeholder="Any"
-                            className="w-full bg-black/20 text-white text-sm pl-8 pr-2 py-2 rounded-lg border border-white/10 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 outline-none hover:bg-black/30 transition-colors"
+                            placeholder="Min"
+                            className="w-full bg-transparent text-white text-sm outline-none placeholder:text-gray-600 mini-input"
+                        />
+                        <span className="text-gray-600">/</span>
+                        <input
+                            type="number"
+                            min="0"
+                            value={filters.maxRam || ''}
+                            onChange={(e) => onUpdate('maxRam', parseFloat(e.target.value) || 0)}
+                            placeholder="Max"
+                            className="w-full bg-transparent text-white text-sm outline-none placeholder:text-gray-600 mini-input"
                         />
                     </div>
                 </div>
 
                 {/* Disks Filter */}
                 <div className="relative">
-                    <label className="block text-[10px] font-medium text-gray-400 mb-1 ml-1 uppercase tracking-wider">Min Disks</label>
-                    <div className="relative">
-                        <HardDrive className="absolute left-2.5 top-1/2 -translate-y-1/2 text-orange-400 w-3.5 h-3.5 pointer-events-none" />
+                    <label className="block text-[10px] font-medium text-gray-400 mb-1 ml-1 uppercase tracking-wider">Disks (Min / Max)</label>
+                    <div className="relative flex items-center gap-1 bg-black/20 rounded-lg border border-white/10 px-2 py-1 hover:bg-black/30 transition-colors focus-within:border-orange-500 focus-within:ring-1 focus-within:ring-orange-500">
+                        <HardDrive className="text-orange-400 w-3.5 h-3.5 shrink-0" />
                         <input
                             type="number"
                             min="0"
                             value={filters.minDisks || ''}
                             onChange={(e) => onUpdate('minDisks', parseInt(e.target.value) || 0)}
-                            placeholder="Any"
-                            className="w-full bg-black/20 text-white text-sm pl-8 pr-2 py-2 rounded-lg border border-white/10 focus:border-orange-500 focus:ring-1 focus:ring-orange-500 outline-none hover:bg-black/30 transition-colors"
+                            placeholder="Min"
+                            className="w-full bg-transparent text-white text-sm outline-none placeholder:text-gray-600 mini-input"
+                        />
+                        <span className="text-gray-600">/</span>
+                        <input
+                            type="number"
+                            min="0"
+                            value={filters.maxDisks || ''}
+                            onChange={(e) => onUpdate('maxDisks', parseInt(e.target.value) || 0)}
+                            placeholder="Max"
+                            className="w-full bg-transparent text-white text-sm outline-none placeholder:text-gray-600 mini-input"
                         />
                     </div>
                 </div>
 
                 {/* NICs Filter */}
                 <div className="relative">
-                    <label className="block text-[10px] font-medium text-gray-400 mb-1 ml-1 uppercase tracking-wider">Min NICs</label>
-                    <div className="relative">
-                        <Network className="absolute left-2.5 top-1/2 -translate-y-1/2 text-indigo-400 w-3.5 h-3.5 pointer-events-none" />
+                    <label className="block text-[10px] font-medium text-gray-400 mb-1 ml-1 uppercase tracking-wider">NICs (Min / Max)</label>
+                    <div className="relative flex items-center gap-1 bg-black/20 rounded-lg border border-white/10 px-2 py-1 hover:bg-black/30 transition-colors focus-within:border-indigo-500 focus-within:ring-1 focus-within:ring-indigo-500">
+                        <Network className="text-indigo-400 w-3.5 h-3.5 shrink-0" />
                         <input
                             type="number"
                             min="0"
                             value={filters.minNics || ''}
                             onChange={(e) => onUpdate('minNics', parseInt(e.target.value) || 0)}
-                            placeholder="Any"
-                            className="w-full bg-black/20 text-white text-sm pl-8 pr-2 py-2 rounded-lg border border-white/10 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none hover:bg-black/30 transition-colors"
+                            placeholder="Min"
+                            className="w-full bg-transparent text-white text-sm outline-none placeholder:text-gray-600 mini-input"
+                        />
+                        <span className="text-gray-600">/</span>
+                        <input
+                            type="number"
+                            min="0"
+                            value={filters.maxNics || ''}
+                            onChange={(e) => onUpdate('maxNics', parseInt(e.target.value) || 0)}
+                            placeholder="Max"
+                            className="w-full bg-transparent text-white text-sm outline-none placeholder:text-gray-600 mini-input"
                         />
                     </div>
                 </div>

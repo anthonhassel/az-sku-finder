@@ -25,7 +25,7 @@ function App() {
                 <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-pink-500/20 rounded-full blur-[120px] animate-pulse duration-[15s]"></div>
             </div>
 
-            <div className="relative z-10 container mx-auto px-4 py-12">
+            <main className="relative z-10 container mx-auto px-4 py-12">
                 <motion.div
                     initial={{ opacity: 0, y: -20 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -80,7 +80,7 @@ function App() {
                         </div>
                     )
                 )}
-            </div>
+            </main>
         </div>
     );
 }

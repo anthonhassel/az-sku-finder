@@ -5,10 +5,17 @@ import { SkuCard } from './components/SkuCard';
 import { SkuTable } from './components/SkuTable';
 import { Pagination } from './components/Pagination';
 import { motion } from 'framer-motion';
+import { initGA, trackPageView } from './utils/analytics';
 
 function App() {
     const { skus, loading, filters, availableRegions, updateFilter, refresh, lastUpdated, page, totalPages, setPage, sortConfig, handleSort } = useSkus(true);
     const [viewMode, setViewMode] = useState<'grid' | 'table'>('grid');
+
+    // Initialize GA and track initial page view
+    useEffect(() => {
+        initGA();
+        trackPageView(window.location.pathname);
+    }, []);
 
     // Check for credentials on mount
     useEffect(() => {

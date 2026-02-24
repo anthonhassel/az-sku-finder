@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import type { FilterOptions } from '../types';
 import { Cpu, MapPin, Server, LayoutGrid, List, HardDrive, Network, Zap, ChevronDown, Check } from 'lucide-react';
+import { trackFilterChange } from '../utils/analytics';
 
 interface FilterBarProps {
     filters: FilterOptions;
@@ -14,6 +15,12 @@ interface FilterBarProps {
 export function FilterBar({ filters, availableRegions, onUpdate, viewMode, onViewChange, lastUpdated }: FilterBarProps) {
     const [isFeatureOpen, setIsFeatureOpen] = useState(false);
     const featureDropdownRef = useRef<HTMLDivElement>(null);
+
+    // Track filter updates
+    const handleUpdate = (key: keyof FilterOptions, value: any) => {
+        onUpdate(key, value);
+        trackFilterChange(key, value);
+    };
 
     useEffect(() => {
         function handleClickOutside(event: MouseEvent) {
@@ -39,7 +46,7 @@ export function FilterBar({ filters, availableRegions, onUpdate, viewMode, onVie
         const newFeatures = currentFeatures.includes(id)
             ? currentFeatures.filter(f => f !== id)
             : [...currentFeatures, id];
-        onUpdate('features', newFeatures);
+        handleUpdate('features', newFeatures);
     };
 
     return (
@@ -54,7 +61,7 @@ export function FilterBar({ filters, availableRegions, onUpdate, viewMode, onVie
                         <MapPin className="absolute left-2.5 top-1/2 -translate-y-1/2 text-pink-400 w-4 h-4 pointer-events-none" />
                         <select
                             value={filters.region}
-                            onChange={(e) => onUpdate('region', e.target.value)}
+                            onChange={(e) => handleUpdate('region', e.target.value)}
                             className="w-full bg-black/20 text-white text-sm pl-8 pr-2 py-2 rounded-lg border border-white/10 focus:border-pink-500 focus:ring-1 focus:ring-pink-500 outline-none appearance-none cursor-pointer hover:bg-black/30 transition-colors"
                         >
                             {availableRegions.map((r) => (
@@ -72,7 +79,7 @@ export function FilterBar({ filters, availableRegions, onUpdate, viewMode, onVie
                     <div className="relative">
                         <select
                             value={filters.os}
-                            onChange={(e) => onUpdate('os', e.target.value)}
+                            onChange={(e) => handleUpdate('os', e.target.value)}
                             className="w-full bg-black/20 text-white text-sm pl-3 pr-8 py-2 rounded-lg border border-white/10 focus:border-pink-500 focus:ring-1 focus:ring-pink-500 outline-none appearance-none cursor-pointer hover:bg-black/30 transition-colors"
                         >
                             <option value="linux" className="bg-gray-900 text-white">Linux</option>
@@ -91,7 +98,7 @@ export function FilterBar({ filters, availableRegions, onUpdate, viewMode, onVie
                             type="number"
                             min="0"
                             value={filters.minCpu || ''}
-                            onChange={(e) => onUpdate('minCpu', parseInt(e.target.value) || 0)}
+                            onChange={(e) => handleUpdate('minCpu', parseInt(e.target.value) || 0)}
                             placeholder="Min"
                             className="w-full bg-transparent text-white text-sm outline-none placeholder:text-gray-600 mini-input"
                         />
@@ -100,7 +107,7 @@ export function FilterBar({ filters, availableRegions, onUpdate, viewMode, onVie
                             type="number"
                             min="0"
                             value={filters.maxCpu || ''}
-                            onChange={(e) => onUpdate('maxCpu', parseInt(e.target.value) || 0)}
+                            onChange={(e) => handleUpdate('maxCpu', parseInt(e.target.value) || 0)}
                             placeholder="Max"
                             className="w-full bg-transparent text-white text-sm outline-none placeholder:text-gray-600 mini-input"
                         />
@@ -116,7 +123,7 @@ export function FilterBar({ filters, availableRegions, onUpdate, viewMode, onVie
                             type="number"
                             min="0"
                             value={filters.minRam || ''}
-                            onChange={(e) => onUpdate('minRam', parseFloat(e.target.value) || 0)}
+                            onChange={(e) => handleUpdate('minRam', parseFloat(e.target.value) || 0)}
                             placeholder="Min"
                             className="w-full bg-transparent text-white text-sm outline-none placeholder:text-gray-600 mini-input"
                         />
@@ -125,7 +132,7 @@ export function FilterBar({ filters, availableRegions, onUpdate, viewMode, onVie
                             type="number"
                             min="0"
                             value={filters.maxRam || ''}
-                            onChange={(e) => onUpdate('maxRam', parseFloat(e.target.value) || 0)}
+                            onChange={(e) => handleUpdate('maxRam', parseFloat(e.target.value) || 0)}
                             placeholder="Max"
                             className="w-full bg-transparent text-white text-sm outline-none placeholder:text-gray-600 mini-input"
                         />
@@ -141,7 +148,7 @@ export function FilterBar({ filters, availableRegions, onUpdate, viewMode, onVie
                             type="number"
                             min="0"
                             value={filters.minDisks || ''}
-                            onChange={(e) => onUpdate('minDisks', parseInt(e.target.value) || 0)}
+                            onChange={(e) => handleUpdate('minDisks', parseInt(e.target.value) || 0)}
                             placeholder="Min"
                             className="w-full bg-transparent text-white text-sm outline-none placeholder:text-gray-600 mini-input"
                         />
@@ -150,7 +157,7 @@ export function FilterBar({ filters, availableRegions, onUpdate, viewMode, onVie
                             type="number"
                             min="0"
                             value={filters.maxDisks || ''}
-                            onChange={(e) => onUpdate('maxDisks', parseInt(e.target.value) || 0)}
+                            onChange={(e) => handleUpdate('maxDisks', parseInt(e.target.value) || 0)}
                             placeholder="Max"
                             className="w-full bg-transparent text-white text-sm outline-none placeholder:text-gray-600 mini-input"
                         />
@@ -166,7 +173,7 @@ export function FilterBar({ filters, availableRegions, onUpdate, viewMode, onVie
                             type="number"
                             min="0"
                             value={filters.minNics || ''}
-                            onChange={(e) => onUpdate('minNics', parseInt(e.target.value) || 0)}
+                            onChange={(e) => handleUpdate('minNics', parseInt(e.target.value) || 0)}
                             placeholder="Min"
                             className="w-full bg-transparent text-white text-sm outline-none placeholder:text-gray-600 mini-input"
                         />
@@ -175,7 +182,7 @@ export function FilterBar({ filters, availableRegions, onUpdate, viewMode, onVie
                             type="number"
                             min="0"
                             value={filters.maxNics || ''}
-                            onChange={(e) => onUpdate('maxNics', parseInt(e.target.value) || 0)}
+                            onChange={(e) => handleUpdate('maxNics', parseInt(e.target.value) || 0)}
                             placeholder="Max"
                             className="w-full bg-transparent text-white text-sm outline-none placeholder:text-gray-600 mini-input"
                         />
@@ -227,7 +234,10 @@ export function FilterBar({ filters, availableRegions, onUpdate, viewMode, onVie
                     <div className="flex items-center gap-2 self-end h-full w-full">
                         <div className="bg-black/40 rounded-lg p-1 flex items-center gap-1 border border-white/10 h-full flex-1 justify-center">
                             <button
-                                onClick={() => onViewChange('grid')}
+                                onClick={() => {
+                                    onViewChange('grid');
+                                    trackFilterChange('viewMode', 'grid');
+                                }}
                                 className={`h-full flex-1 rounded-md transition-all flex items-center justify-center ${viewMode === 'grid'
                                     ? 'bg-white/20 text-white shadow-sm'
                                     : 'text-gray-400 hover:text-white hover:bg-white/5'
@@ -237,7 +247,10 @@ export function FilterBar({ filters, availableRegions, onUpdate, viewMode, onVie
                                 <LayoutGrid className="w-4 h-4" />
                             </button>
                             <button
-                                onClick={() => onViewChange('table')}
+                                onClick={() => {
+                                    onViewChange('table');
+                                    trackFilterChange('viewMode', 'table');
+                                }}
                                 className={`h-full flex-1 rounded-md transition-all flex items-center justify-center ${viewMode === 'table'
                                     ? 'bg-white/20 text-white shadow-sm'
                                     : 'text-gray-400 hover:text-white hover:bg-white/5'
